@@ -1,0 +1,4 @@
+module BudsPeekCore {
+    header "budspeek_core.h"
+    export *
+}
