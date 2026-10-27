@@ -160,9 +160,9 @@ struct StatusPanel: View {
             HStack(spacing: 9) {
                 BatteryTile(title: "왼쪽", value: manager.status.hasBatteryData ? manager.status.batteryLeft : nil)
                 BatteryTile(title: "오른쪽", value: manager.status.hasBatteryData ? manager.status.batteryRight : nil)
-                BatteryTile(title: "케이스", value: manager.status.hasCaseBatteryData ? manager.status.batteryCase : nil)
+                BatteryTile(title: "케이스", value: manager.status.displayedCaseBattery)
             }
-            Text("배터리 값은 버즈가 보내는 상태 정보를 표시합니다")
+            Text("케이스 잔량은 버즈가 케이스 안에 있을 때 확인할 수 있습니다")
                 .font(.caption2)
                 .foregroundStyle(.tertiary)
         }
@@ -236,9 +236,9 @@ private struct BatteryTile: View {
 
     var body: some View {
         VStack(spacing: 7) {
-            Image(systemName: (value ?? 0) > 20 ? "battery.75percent" : "battery.25percent")
+            Image(systemName: batterySymbol)
                 .font(.system(size: 17))
-                .foregroundStyle((value ?? 0) > 20 ? Color.secondary : Color.orange)
+                .foregroundStyle(batteryTint)
             Text(value.map { "\($0)%" } ?? "—")
                 .font(.system(size: 15, weight: .semibold, design: .rounded))
             Text(title).font(.caption2).foregroundStyle(.secondary)
@@ -246,5 +246,15 @@ private struct BatteryTile: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 10)
         .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 12))
+    }
+
+    private var batterySymbol: String {
+        guard let value else { return "questionmark.circle" }
+        return value > 20 ? "battery.75percent" : "battery.25percent"
+    }
+
+    private var batteryTint: Color {
+        guard let value else { return .secondary }
+        return value > 20 ? .secondary : .orange
     }
 }

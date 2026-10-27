@@ -8,6 +8,17 @@ final class BudsStatus: @unchecked Sendable {
     var hasBatteryData = false
     var hasCaseBatteryData = false
 
+    /// The case has no independent Bluetooth link; an earbud relays its level.
+    /// Firmware reports zero when neither earbud is in the case, so treat that
+    /// combination as unavailable rather than a measured empty case.
+    var displayedCaseBattery: Int? {
+        guard hasCaseBatteryData else { return nil }
+        if batteryCase == 0 && !placementLeft.isInCase && !placementRight.isInCase {
+            return nil
+        }
+        return batteryCase
+    }
+
     /// Derived from placement — the payload carries no charging flag, and a
     /// bud only charges inside the case. The case itself gives no signal about
     /// whether *it* is plugged in, so there is deliberately no equivalent for it.
